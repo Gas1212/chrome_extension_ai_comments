@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Créer icon.png</title>
+</head>
+<body>
+  <h1>Téléchargez l'icône ci-dessous</h1>
+  <p>Clic droit > "Enregistrer l'image sous" > icon.png</p>
+  <canvas id="canvas" width="128" height="128"></canvas>
+  <br><br>
+  <a id="download" download="icon.png">Télécharger icon.png</a>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const size = 128;
+
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#667eea');
+    gradient.addColorStop(1, '#764ba2');
+
+    // Draw circle background
+    ctx.beginPath();
+    ctx.arc(size/2, size/2, size/2 - 4, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Draw AI nodes
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+
+    // Center node
+    ctx.beginPath();
+    ctx.arc(64, 64, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Helper functions
+    const drawNode = (x, y, r) => {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    const drawLine = (x1, y1, x2, y2) => {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    };
+
+    // Top
+    drawNode(64, 32, 6);
+    drawLine(64, 40, 64, 56);
+
+    // Bottom
+    drawNode(64, 96, 6);
+    drawLine(64, 72, 64, 90);
+
+    // Left
+    drawNode(32, 64, 6);
+    drawLine(40, 64, 56, 64);
+
+    // Right
+    drawNode(96, 64, 6);
+    drawLine(72, 64, 88, 64);
+
+    // Diagonals
+    drawNode(42, 42, 5);
+    drawLine(48, 48, 58, 58);
+
+    drawNode(86, 42, 5);
+    drawLine(80, 48, 70, 58);
+
+    drawNode(42, 86, 5);
+    drawLine(48, 80, 58, 70);
+
+    drawNode(86, 86, 5);
+    drawLine(80, 80, 70, 70);
+
+    // Comment bubble
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.beginPath();
+    ctx.moveTo(88, 20);
+    ctx.lineTo(108, 20);
+    ctx.quadraticCurveTo(114, 20, 114, 26);
+    ctx.lineTo(114, 42);
+    ctx.quadraticCurveTo(114, 48, 108, 48);
+    ctx.lineTo(98, 48);
+    ctx.lineTo(93, 55);
+    ctx.lineTo(93, 48);
+    ctx.lineTo(88, 48);
+    ctx.quadraticCurveTo(82, 48, 82, 42);
+    ctx.lineTo(82, 26);
+    ctx.quadraticCurveTo(82, 20, 88, 20);
+    ctx.fill();
+
+    // Dots in bubble
+    ctx.fillStyle = '#667eea';
+    ctx.beginPath();
+    ctx.arc(93, 34, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(100, 34, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Set download link
+    document.getElementById('download').href = canvas.toDataURL('image/png');
+  </script>
+</body>
+</html>

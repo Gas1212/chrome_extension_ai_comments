@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Générateur d'icônes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .canvas-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .canvas-item {
+      text-align: center;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    canvas {
+      border: 1px solid #ddd;
+      background: white;
+    }
+    button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .instructions {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Générateur d'icônes - Commentaire AI</h1>
+
+  <div class="instructions">
+    <h3>Instructions :</h3>
+    <ol>
+      <li>Cliquez sur "Générer les icônes" pour créer les icônes</li>
+      <li>Faites un clic droit sur chaque image et "Enregistrer l'image sous..."</li>
+      <li>Sauvegardez avec les noms : icon16.png, icon32.png, icon48.png, icon128.png</li>
+    </ol>
+  </div>
+
+  <button onclick="generateIcons()">Générer les icônes</button>
+
+  <div class="canvas-container" id="canvasContainer"></div>
+
+  <script>
+    const sizes = [16, 32, 48, 128];
+
+    function generateIcons() {
+      const container = document.getElementById('canvasContainer');
+      container.innerHTML = '';
+
+      sizes.forEach(size => {
+        const div = document.createElement('div');
+        div.className = 'canvas-item';
+
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        canvas.id = `canvas${size}`;
+
+        const label = document.createElement('p');
+        label.textContent = `icon${size}.png`;
+
+        div.appendChild(canvas);
+        div.appendChild(label);
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = 'Télécharger';
+        downloadBtn.style.padding = '5px 10px';
+        downloadBtn.style.fontSize = '12px';
+        downloadBtn.onclick = () => downloadIcon(size);
+        div.appendChild(downloadBtn);
+
+        container.appendChild(div);
+
+        drawIcon(canvas, size);
+      });
+    }
+
+    function drawIcon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      const scale = size / 128;
+
+      // Background gradient
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#667eea');
+      gradient.addColorStop(1, '#764ba2');
+
+      // Draw circle background
+      ctx.beginPath();
+      ctx.arc(size/2, size/2, size/2 * 0.94, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // Draw AI nodes
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = Math.max(1, 4 * scale);
+      ctx.lineCap = 'round';
+
+      // Center node
+      const centerR = 8 * scale;
+      ctx.beginPath();
+      ctx.arc(size/2, size/2, centerR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Helper function for nodes
+      const drawNode = (x, y, r) => {
+        ctx.beginPath();
+        ctx.arc(x * scale, y * scale, r * scale, 0, Math.PI * 2);
+        ctx.fill();
+      };
+
+      const drawLine = (x1, y1, x2, y2) => {
+        ctx.beginPath();
+        ctx.moveTo(x1 * scale, y1 * scale);
+        ctx.lineTo(x2 * scale, y2 * scale);
+        ctx.stroke();
+      };
+
+      // Top
+      drawNode(64, 32, 6);
+      drawLine(64, 40, 64, 56);
+
+      // Bottom
+      drawNode(64, 96, 6);
+      drawLine(64, 72, 64, 90);
+
+      // Left
+      drawNode(32, 64, 6);
+      drawLine(40, 64, 56, 64);
+
+      // Right
+      drawNode(96, 64, 6);
+      drawLine(72, 64, 88, 64);
+
+      // Diagonals
+      drawNode(42, 42, 5);
+      drawLine(48, 48, 58, 58);
+
+      drawNode(86, 42, 5);
+      drawLine(80, 48, 70, 58);
+
+      drawNode(42, 86, 5);
+      drawLine(48, 80, 58, 70);
+
+      drawNode(86, 86, 5);
+      drawLine(80, 80, 70, 70);
+
+      // Comment bubble (only for larger sizes)
+      if (size >= 32) {
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.beginPath();
+        ctx.moveTo(88 * scale, 20 * scale);
+        ctx.lineTo(108 * scale, 20 * scale);
+        ctx.quadraticCurveTo(114 * scale, 20 * scale, 114 * scale, 26 * scale);
+        ctx.lineTo(114 * scale, 42 * scale);
+        ctx.quadraticCurveTo(114 * scale, 48 * scale, 108 * scale, 48 * scale);
+        ctx.lineTo(98 * scale, 48 * scale);
+        ctx.lineTo(93 * scale, 55 * scale);
+        ctx.lineTo(93 * scale, 48 * scale);
+        ctx.lineTo(88 * scale, 48 * scale);
+        ctx.quadraticCurveTo(82 * scale, 48 * scale, 82 * scale, 42 * scale);
+        ctx.lineTo(82 * scale, 26 * scale);
+        ctx.quadraticCurveTo(82 * scale, 20 * scale, 88 * scale, 20 * scale);
+        ctx.fill();
+
+        // Dots in bubble
+        ctx.fillStyle = '#667eea';
+        ctx.beginPath();
+        ctx.arc(93 * scale, 34 * scale, 2 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(100 * scale, 34 * scale, 2 * scale, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function downloadIcon(size) {
+      const canvas = document.getElementById(`canvas${size}`);
+      const link = document.createElement('a');
+      link.download = `icon${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Auto-generate on load
+    window.onload = generateIcons;
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Commentaire AI",
+  "version": "1.0.0",
+  "description": "Extension pour générer des réponses intelligentes aux commentaires sur Reddit, Quora et autres réseaux sociaux",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.reddit.com/*",
+    "https://reddit.com/*",
+    "https://www.quora.com/*",
+    "https://quora.com/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "icons/icon.png"
+  },
+  "icons": {
+    "16": "icons/icon.png",
+    "32": "icons/icon.png",
+    "48": "icons/icon.png",
+    "128": "icons/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.reddit.com/*",
+        "https://reddit.com/*"
+      ],
+      "js": ["content/reddit.js"],
+      "css": ["content/styles.css"]
+    },
+    {
+      "matches": [
+        "https://www.quora.com/*",
+        "https://quora.com/*"
+      ],
+      "js": ["content/quora.js"],
+      "css": ["content/styles.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  }
+}

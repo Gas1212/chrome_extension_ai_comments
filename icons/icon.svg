@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="url(#grad)"/>
+
+  <!-- AI brain/network icon -->
+  <g fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Central node -->
+    <circle cx="64" cy="64" r="8" fill="white"/>
+
+    <!-- Top nodes -->
+    <circle cx="64" cy="32" r="6" fill="white"/>
+    <line x1="64" y1="40" x2="64" y2="56"/>
+
+    <!-- Bottom nodes -->
+    <circle cx="64" cy="96" r="6" fill="white"/>
+    <line x1="64" y1="72" x2="64" y2="90"/>
+
+    <!-- Left nodes -->
+    <circle cx="32" cy="64" r="6" fill="white"/>
+    <line x1="40" y1="64" x2="56" y2="64"/>
+
+    <!-- Right nodes -->
+    <circle cx="96" cy="64" r="6" fill="white"/>
+    <line x1="72" y1="64" x2="88" y2="64"/>
+
+    <!-- Diagonal connections -->
+    <circle cx="42" cy="42" r="5" fill="white"/>
+    <line x1="48" y1="48" x2="58" y2="58"/>
+
+    <circle cx="86" cy="42" r="5" fill="white"/>
+    <line x1="80" y1="48" x2="70" y2="58"/>
+
+    <circle cx="42" cy="86" r="5" fill="white"/>
+    <line x1="48" y1="80" x2="58" y2="70"/>
+
+    <circle cx="86" cy="86" r="5" fill="white"/>
+    <line x1="80" y1="80" x2="70" y2="70"/>
+  </g>
+
+  <!-- Comment bubble hint -->
+  <g fill="white" opacity="0.9">
+    <path d="M88 20 L108 20 Q114 20 114 26 L114 42 Q114 48 108 48 L98 48 L93 55 L93 48 L88 48 Q82 48 82 42 L82 26 Q82 20 88 20" stroke="none"/>
+    <circle cx="93" cy="34" r="2" fill="#667eea"/>
+    <circle cx="100" cy="34" r="2" fill="#667eea"/>
+  </g>
+</svg>

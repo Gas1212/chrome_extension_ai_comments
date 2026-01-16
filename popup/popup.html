@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commentaire AI</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <h1>Commentaire AI</h1>
+      </div>
+      <p class="subtitle">Générez des réponses intelligentes</p>
+    </header>
+
+    <main class="popup-main">
+      <!-- Status -->
+      <div class="status-card" id="statusCard">
+        <div class="status-indicator" id="statusIndicator"></div>
+        <span class="status-text" id="statusText">Non configuré</span>
+      </div>
+
+      <!-- Configuration API -->
+      <section class="config-section">
+        <h2>Configuration API</h2>
+
+        <div class="form-group">
+          <label for="apiProvider">Fournisseur AI</label>
+          <select id="apiProvider">
+            <option value="gemini">Google Gemini (Recommandé)</option>
+            <option value="openai">OpenAI (GPT-3.5)</option>
+            <option value="anthropic">Anthropic (Claude)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="apiKey">Clé API</label>
+          <div class="input-with-toggle">
+            <input type="password" id="apiKey" placeholder="Entrez votre clé API...">
+            <button type="button" class="toggle-visibility" id="toggleVisibility">
+              <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <small class="help-text">
+            <a href="#" id="getApiKeyLink" target="_blank">Obtenir une clé API</a>
+          </small>
+        </div>
+
+        <button class="btn btn-primary" id="saveConfig">
+          Sauvegarder
+        </button>
+      </section>
+
+      <!-- Paramètres -->
+      <section class="settings-section">
+        <h2>Paramètres</h2>
+
+        <div class="form-group">
+          <label for="defaultTone">Ton par défaut</label>
+          <select id="defaultTone">
+            <option value="friendly">Amical</option>
+            <option value="professional">Professionnel</option>
+            <option value="humorous">Humoristique</option>
+            <option value="informative">Informatif</option>
+            <option value="supportive">Encourageant</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="language">Langue des réponses</label>
+          <select id="language">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Sites supportés -->
+      <section class="sites-section">
+        <h2>Sites supportés</h2>
+        <div class="sites-list">
+          <div class="site-item">
+            <span class="site-icon">🔴</span>
+            <span class="site-name">Reddit</span>
+            <span class="site-status active">Actif</span>
+          </div>
+          <div class="site-item">
+            <span class="site-icon">🟠</span>
+            <span class="site-name">Quora</span>
+            <span class="site-status active">Actif</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="popup-footer">
+      <p>Version 1.0.0</p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
