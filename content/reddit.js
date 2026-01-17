@@ -157,6 +157,7 @@
 
           <div class="ai-modal-actions">
             <button class="ai-btn ai-btn-secondary" id="ai-generate">Générer</button>
+            <button class="ai-btn ai-btn-secondary" id="ai-copy" disabled>Copier</button>
             <button class="ai-btn ai-btn-primary" id="ai-insert" disabled>Insérer</button>
           </div>
         </div>
@@ -167,6 +168,7 @@
       const closeBtn = overlay.querySelector('.ai-modal-close');
       const toneOptions = overlay.querySelectorAll('.ai-tone-option');
       const generateBtn = overlay.querySelector('#ai-generate');
+      const copyBtn = overlay.querySelector('#ai-copy');
       const insertBtn = overlay.querySelector('#ai-insert');
       const contextTextarea = overlay.querySelector('.ai-context-text');
       const responseTextarea = overlay.querySelector('.ai-response-text');
@@ -200,22 +202,51 @@
           const text = await this.callAPI(ctx, tone);
           responseTextarea.value = text;
           insertBtn.disabled = false;
+          copyBtn.disabled = false;
         } catch (err) {
           responseTextarea.value = 'Erreur: ' + err.message;
         }
         generateBtn.disabled = false;
       };
 
+      // Copier
+      copyBtn.onclick = async () => {
+        const text = responseTextarea.value;
+        if (text && !text.startsWith('Erreur') && !text.startsWith('Génération')) {
+          try {
+            await navigator.clipboard.writeText(text);
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = '✓ Copié!';
+            copyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+              copyBtn.style.background = '';
+            }, 2000);
+          } catch (err) {
+            this.showNotification('Erreur lors de la copie');
+          }
+        }
+      };
+
       // Insérer
       insertBtn.onclick = () => {
         const text = responseTextarea.value;
         if (text && !text.startsWith('Erreur') && !text.startsWith('Génération')) {
-          if (field.tagName === 'TEXTAREA') {
+          if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
             field.value = text;
+          } else if (field.isContentEditable || field.getAttribute('contenteditable') === 'true') {
+            // Pour contenteditable, utiliser innerHTML et innerText
+            field.innerHTML = text.replace(/\n/g, '<br>');
+            field.innerText = text;
           } else {
             field.textContent = text;
           }
+
+          // Déclencher plusieurs événements pour compatibilité Reddit
           field.dispatchEvent(new Event('input', { bubbles: true }));
+          field.dispatchEvent(new Event('change', { bubbles: true }));
+          field.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
           field.focus();
           overlay.remove();
         }
@@ -293,10 +324,28 @@
             </div>
           `;
 
-          menu.style.left = e.pageX + 'px';
-          menu.style.top = e.pageY + 'px';
-
           document.body.appendChild(menu);
+
+          // Positionner intelligemment (éviter de sortir de l'écran)
+          const menuRect = menu.getBoundingClientRect();
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+
+          let left = e.pageX;
+          let top = e.pageY;
+
+          // Ajuster si sort à droite
+          if (e.clientX + menuRect.width > viewportWidth) {
+            left = e.pageX - menuRect.width;
+          }
+
+          // Ajuster si sort en bas
+          if (e.clientY + menuRect.height > viewportHeight) {
+            top = e.pageY - menuRect.height;
+          }
+
+          menu.style.left = left + 'px';
+          menu.style.top = top + 'px';
 
           // Clic sur l'option
           menu.querySelector('.ai-context-menu-item').addEventListener('click', () => {

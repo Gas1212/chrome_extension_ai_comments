@@ -1,10 +1,10 @@
-/* Petite icône de génération AI - Circulaire et visible */
+/* Petite icône de génération AI - Positionnée EN DEVANT du champ */
 .ai-gen-icon {
   position: absolute !important;
-  top: 10px !important;
+  top: -45px !important;
   right: 10px !important;
-  width: 36px !important;
-  height: 36px !important;
+  width: 40px !important;
+  height: 40px !important;
   padding: 0 !important;
   display: flex !important;
   align-items: center !important;
@@ -25,7 +25,7 @@
 
 /* Position spéciale pour shreddit-composer de Reddit */
 shreddit-composer .ai-gen-icon {
-  top: 60px !important;
+  top: -50px !important;
   right: 16px !important;
 }
 
