@@ -86,10 +86,23 @@
         // S'assurer que le conteneur a position relative
         const computedStyle = window.getComputedStyle(container);
         if (computedStyle.position === 'static') {
-          container.style.position = 'relative';
+          container.style.setProperty('position', 'relative', 'important');
         }
+
+        // Ajouter l'icône
         container.appendChild(icon);
-        console.log('Reddit AI: Icon added to field');
+
+        // Vérifier que l'icône est bien visible
+        setTimeout(() => {
+          const iconStyle = window.getComputedStyle(icon);
+          console.log('Reddit AI: Icon added to field', {
+            display: iconStyle.display,
+            position: iconStyle.position,
+            zIndex: iconStyle.zIndex,
+            visibility: iconStyle.visibility,
+            opacity: iconStyle.opacity
+          });
+        }, 100);
       } else if (!container) {
         console.warn('Reddit AI: No container found for field');
       } else if (container.querySelector('.ai-gen-icon')) {
