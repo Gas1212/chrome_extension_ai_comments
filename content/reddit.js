@@ -10,12 +10,19 @@
       console.log('Reddit AI Commentaire initialized');
       this.observeDOM();
       this.scanForTextareas();
+
+      // Re-scan périodiquement pour être sûr
+      setInterval(() => this.scanForTextareas(), 2000);
     },
 
-    // Observer les changements du DOM
+    // Observer les changements du DOM avec debounce
     observeDOM() {
+      let timeout;
       const observer = new MutationObserver(() => {
-        this.scanForTextareas();
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          this.scanForTextareas();
+        }, 500);
       });
 
       observer.observe(document.body, {
@@ -35,14 +42,20 @@
         '[role="textbox"]'
       ];
 
+      let foundCount = 0;
       selectors.forEach(selector => {
         document.querySelectorAll(selector).forEach(el => {
           // Ignorer les champs dans notre modal
           if (!el.closest('.ai-modal')) {
+            foundCount++;
             this.addIconToField(el);
           }
         });
       });
+
+      if (foundCount > 0) {
+        console.log(`Reddit AI: Found ${foundCount} comment field(s)`);
+      }
     },
 
     // Ajouter l'icône au champ
@@ -76,6 +89,11 @@
           container.style.position = 'relative';
         }
         container.appendChild(icon);
+        console.log('Reddit AI: Icon added to field');
+      } else if (!container) {
+        console.warn('Reddit AI: No container found for field');
+      } else if (container.querySelector('.ai-gen-icon')) {
+        console.log('Reddit AI: Icon already exists in container');
       }
 
       // Click handler
