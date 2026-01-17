@@ -1,74 +1,115 @@
-# Commentaire AI
+# Commentaire AI - Chrome Extension
 
-Extension Chrome pour générer des réponses intelligentes aux commentaires sur les réseaux sociaux (Reddit, Quora).
+Extension Chrome pour générer des réponses intelligentes aux commentaires sur Reddit, Quora et autres sites web.
 
-## Fonctionnalités
+## 🚀 Fonctionnalités
 
-- Génération automatique de réponses aux commentaires
-- Support de plusieurs tons : Amical, Professionnel, Humoristique, Informatif, Encourageant
-- Support multilingue : Français, Anglais, Espagnol, Allemand
-- Compatible avec Reddit et Quora
-- Interface moderne et intuitive
+### 3 Méthodes d'Activation
 
-## Installation
+1. **Icône Automatique** (Reddit/Quora)
+   - Icône circulaire violette apparaît automatiquement sur les champs détectés
+   - Animation pulse pour attirer l'attention
+   - Cliquez dessus pour ouvrir la modal
 
-### 1. Générer les icônes
+2. **Menu Contextuel** (Tous les champs)
+   - Clic droit sur n'importe quel champ de texte
+   - Option "Générer avec AI" dans le menu contextuel
+   - Fonctionne sur TOUS les sites web
 
-1. Ouvrez le fichier `icons/generate-icons.html` dans votre navigateur
-2. Cliquez sur "Générer les icônes"
-3. Téléchargez chaque icône et sauvegardez-la dans le dossier `icons/` avec les noms :
-   - `icon16.png`
-   - `icon32.png`
-   - `icon48.png`
-   - `icon128.png`
+3. **Raccourci Clavier** (Tous les champs)
+   - Appuyez sur **Ctrl+Shift+G** dans un champ de texte
+   - Activation rapide sans souris
+   - Universel sur tous les sites
 
-### 2. Charger l'extension dans Chrome
+## 🔧 Installation
 
-1. Ouvrez Chrome et allez à `chrome://extensions/`
-2. Activez le "Mode développeur" (coin supérieur droit)
-3. Cliquez sur "Charger l'extension non empaquetée"
+### 1. Charger l'extension dans Chrome
+
+1. Ouvrez Chrome → `chrome://extensions/`
+2. Activez le **Mode développeur** (coin supérieur droit)
+3. Cliquez sur **Charger l'extension non empaquetée**
 4. Sélectionnez le dossier de l'extension
 
-### 3. Configurer l'API
+### 2. Configuration Initiale
 
-1. Cliquez sur l'icône de l'extension dans la barre d'outils
-2. Choisissez votre fournisseur AI (OpenAI ou Anthropic)
-3. Entrez votre clé API :
-   - OpenAI : https://platform.openai.com/api-keys
-   - Anthropic : https://console.anthropic.com/settings/keys
-4. Cliquez sur "Sauvegarder"
+1. Cliquez sur l'icône de l'extension dans Chrome
+2. Choisissez votre fournisseur AI
+3. Entrez votre clé API (voir liens ci-dessous)
+4. Sélectionnez le ton par défaut et la langue
+5. Cliquez sur **Sauvegarder**
 
-## Utilisation
+## 🔑 Obtenir une Clé API
 
-1. Visitez Reddit ou Quora
-2. Trouvez un commentaire auquel vous souhaitez répondre
-3. Cliquez sur le bouton "AI Réponse" qui apparaît près des zones de commentaire
-4. Choisissez le ton souhaité
-5. La réponse sera générée automatiquement
-6. Modifiez si nécessaire, puis cliquez sur "Insérer la réponse"
+### Google Gemini (Recommandé - Gratuit)
+https://aistudio.google.com/app/apikey
 
-## Structure du projet
+### Groq (Rapide - Gratuit)
+https://console.groq.com/keys
+
+### OpenAI
+https://platform.openai.com/api-keys
+
+### Anthropic
+https://console.anthropic.com/settings/keys
+
+## 📖 Utilisation
+
+### Sur Reddit
+
+1. **Détection automatique** : L'icône apparaît sur le champ de commentaire
+2. **Clic sur l'icône** pour ouvrir la modal
+3. **Ou clic droit** → "Générer avec AI"
+4. **Ou Ctrl+Shift+G** dans le champ
+
+### Sur Quora
+
+1. Même système que Reddit
+2. Détection automatique des champs de réponse
+3. + Menu contextuel + Raccourci clavier
+
+### Sur d'autres sites
+
+1. Cliquez dans n'importe quel champ de texte
+2. **Clic droit** → "Générer avec AI"
+3. **Ou** appuyez sur **Ctrl+Shift+G**
+
+## 🎨 Tons Disponibles
+
+- **Amical** : Chaleureux et convivial
+- **Professionnel** : Formel et précis
+- **Humoristique** : Léger et amusant
+- **Informatif** : Détaillé et éducatif
+
+## 📁 Structure du projet
 
 ```
 commentaire AI/
-├── manifest.json          # Configuration de l'extension
+├── manifest.json           # Configuration Chrome Extension
 ├── background/
-│   └── service-worker.js  # Gestion des appels API
+│   └── service-worker.js   # Gestion des appels API
 ├── content/
-│   ├── styles.css         # Styles communs
-│   ├── reddit.js          # Script pour Reddit
-│   └── quora.js           # Script pour Quora
+│   ├── styles.css          # Styles (icône, modal, menu)
+│   ├── reddit.js           # Script pour Reddit
+│   └── quora.js            # Script pour Quora
 ├── popup/
-│   ├── popup.html         # Interface du popup
-│   ├── popup.css          # Styles du popup
-│   └── popup.js           # Logique du popup
+│   ├── popup.html          # Interface de configuration
+│   ├── popup.css           # Styles du popup
+│   └── popup.js            # Logique de configuration
 ├── icons/
-│   ├── icon.svg           # Icône source
-│   └── generate-icons.html # Générateur d'icônes PNG
+│   ├── icon16.png, icon32.png, icon48.png, icon128.png
+│   └── generate-icons.html # Générateur d'icônes
 └── README.md
 ```
 
-## APIs supportées
+## 🤖 Fournisseurs AI Supportés
+
+### Google Gemini (Recommandé)
+- Modèle : gemini-2.0-flash-exp
+- Gratuit et performant
+
+### Groq
+- Modèle : llama-3.3-70b-versatile
+- Très rapide
 
 ### OpenAI
 - Modèle : GPT-3.5-turbo
@@ -78,6 +119,24 @@ commentaire AI/
 - Modèle : Claude 3 Haiku
 - Performant et précis
 
-## Licence
+## 💡 Astuces
+
+- Le contexte est extrait automatiquement du commentaire parent ou du titre
+- Vous pouvez éditer le contexte avant de générer
+- La réponse générée est modifiable avant insertion
+- Le raccourci **Ctrl+Shift+G** fonctionne sur TOUS les sites web
+- Si l'icône ne s'affiche pas, utilisez le clic droit ou le raccourci
+
+## 🔒 Confidentialité
+
+- Aucune donnée n'est collectée
+- Les clés API sont stockées localement dans Chrome
+- Les requêtes vont directement aux fournisseurs AI choisis
+
+## 📝 Version
+
+**1.0.0** - Version initiale avec support multi-méthodes
+
+## 📜 Licence
 
 MIT

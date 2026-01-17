@@ -323,8 +323,94 @@ shreddit-composer .ai-gen-icon {
   }
 }
 
+/* Menu contextuel personnalisé */
+.ai-context-menu {
+  position: absolute;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 4px;
+  z-index: 1000000;
+  min-width: 220px;
+}
+
+.ai-context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1f2937;
+  transition: background 0.2s ease;
+}
+
+.ai-context-menu-item:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.ai-context-menu-item svg {
+  flex-shrink: 0;
+  stroke-width: 2.5;
+}
+
+.ai-context-menu-item span:first-of-type {
+  flex: 1;
+  font-weight: 500;
+}
+
+.ai-shortcut {
+  font-size: 11px;
+  opacity: 0.7;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.ai-context-menu-item:hover .ai-shortcut {
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0.9;
+}
+
+/* Notification toast */
+.ai-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  z-index: 1000001;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.ai-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
+  .ai-context-menu {
+    background: #1f2937;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .ai-context-menu-item {
+    color: #f9fafb;
+  }
+
+  .ai-shortcut {
+    background: rgba(255, 255, 255, 0.1);
+  }
   .ai-modal {
     background: #1f2937;
     color: #f9fafb;

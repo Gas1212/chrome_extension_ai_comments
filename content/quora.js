@@ -5,11 +5,18 @@
 (function() {
   'use strict';
 
+  let lastFocusedField = null;
+
   const QuoraAI = {
     init() {
       console.log('Quora AI Commentaire initialized');
       this.observeDOM();
       this.scanForTextareas();
+
+      // Méthodes universelles
+      this.setupContextMenu();
+      this.setupKeyboardShortcut();
+      this.trackFocusedField();
     },
 
     // Observer les changements du DOM
@@ -209,6 +216,90 @@
           reject(new Error('Rafraîchissez la page (F5)'));
         }
       });
+    },
+
+    // === MÉTHODES UNIVERSELLES ===
+
+    trackFocusedField() {
+      document.addEventListener('focusin', (e) => {
+        const target = e.target;
+        if (this.isEditableField(target)) {
+          lastFocusedField = target;
+        }
+      }, true);
+    },
+
+    isEditableField(element) {
+      if (!element) return false;
+      return (
+        element.tagName === 'TEXTAREA' ||
+        element.tagName === 'INPUT' ||
+        element.isContentEditable ||
+        element.getAttribute('contenteditable') === 'true' ||
+        element.getAttribute('role') === 'textbox'
+      );
+    },
+
+    setupContextMenu() {
+      document.addEventListener('contextmenu', (e) => {
+        const target = e.target;
+        if (this.isEditableField(target)) {
+          lastFocusedField = target;
+          document.querySelector('.ai-context-menu')?.remove();
+
+          const menu = document.createElement('div');
+          menu.className = 'ai-context-menu';
+          menu.innerHTML = `
+            <div class="ai-context-menu-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              <span>Générer avec AI</span>
+              <span class="ai-shortcut">Ctrl+Shift+G</span>
+            </div>
+          `;
+
+          menu.style.left = e.pageX + 'px';
+          menu.style.top = e.pageY + 'px';
+          document.body.appendChild(menu);
+
+          menu.querySelector('.ai-context-menu-item').addEventListener('click', () => {
+            menu.remove();
+            this.openModal(target);
+          });
+
+          setTimeout(() => {
+            document.addEventListener('click', () => menu.remove(), { once: true });
+          }, 0);
+        }
+      });
+    },
+
+    setupKeyboardShortcut() {
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+          e.preventDefault();
+          if (lastFocusedField && this.isEditableField(lastFocusedField)) {
+            console.log('AI: Keyboard shortcut triggered');
+            this.openModal(lastFocusedField);
+          } else {
+            this.showNotification('Veuillez d\'abord cliquer dans un champ de texte');
+          }
+        }
+      });
+    },
+
+    showNotification(message) {
+      const toast = document.createElement('div');
+      toast.className = 'ai-toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
   };
 

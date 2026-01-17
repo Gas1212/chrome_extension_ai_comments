@@ -5,6 +5,8 @@
 (function() {
   'use strict';
 
+  let lastFocusedField = null;
+
   const RedditAI = {
     init() {
       console.log('Reddit AI Commentaire initialized');
@@ -13,6 +15,11 @@
 
       // Re-scan périodiquement pour être sûr
       setInterval(() => this.scanForTextareas(), 2000);
+
+      // Ajouter les méthodes universelles
+      this.setupContextMenu();
+      this.setupKeyboardShortcut();
+      this.trackFocusedField();
     },
 
     // Observer les changements du DOM avec debounce
@@ -42,20 +49,14 @@
         '[role="textbox"]'
       ];
 
-      let foundCount = 0;
       selectors.forEach(selector => {
         document.querySelectorAll(selector).forEach(el => {
           // Ignorer les champs dans notre modal
           if (!el.closest('.ai-modal')) {
-            foundCount++;
             this.addIconToField(el);
           }
         });
       });
-
-      if (foundCount > 0) {
-        console.log(`Reddit AI: Found ${foundCount} comment field(s)`);
-      }
     },
 
     // Ajouter l'icône au champ
@@ -91,22 +92,6 @@
 
         // Ajouter l'icône
         container.appendChild(icon);
-
-        // Vérifier que l'icône est bien visible
-        setTimeout(() => {
-          const iconStyle = window.getComputedStyle(icon);
-          console.log('Reddit AI: Icon added to field', {
-            display: iconStyle.display,
-            position: iconStyle.position,
-            zIndex: iconStyle.zIndex,
-            visibility: iconStyle.visibility,
-            opacity: iconStyle.opacity
-          });
-        }, 100);
-      } else if (!container) {
-        console.warn('Reddit AI: No container found for field');
-      } else if (container.querySelector('.ai-gen-icon')) {
-        console.log('Reddit AI: Icon already exists in container');
       }
 
       // Click handler
@@ -258,6 +243,104 @@
           reject(new Error('Rafraîchissez la page (F5)'));
         }
       });
+    },
+
+    // === MÉTHODES UNIVERSELLES ===
+
+    // Suivre le champ actuellement focus
+    trackFocusedField() {
+      document.addEventListener('focusin', (e) => {
+        const target = e.target;
+        if (this.isEditableField(target)) {
+          lastFocusedField = target;
+        }
+      }, true);
+    },
+
+    // Vérifier si c'est un champ éditable
+    isEditableField(element) {
+      if (!element) return false;
+
+      return (
+        element.tagName === 'TEXTAREA' ||
+        element.tagName === 'INPUT' ||
+        element.isContentEditable ||
+        element.getAttribute('contenteditable') === 'true' ||
+        element.getAttribute('role') === 'textbox'
+      );
+    },
+
+    // Menu contextuel (clic droit)
+    setupContextMenu() {
+      document.addEventListener('contextmenu', (e) => {
+        const target = e.target;
+        if (this.isEditableField(target)) {
+          lastFocusedField = target;
+
+          // Supprimer l'ancien menu s'il existe
+          document.querySelector('.ai-context-menu')?.remove();
+
+          // Créer le menu contextuel
+          const menu = document.createElement('div');
+          menu.className = 'ai-context-menu';
+          menu.innerHTML = `
+            <div class="ai-context-menu-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              <span>Générer avec AI</span>
+              <span class="ai-shortcut">Ctrl+Shift+G</span>
+            </div>
+          `;
+
+          menu.style.left = e.pageX + 'px';
+          menu.style.top = e.pageY + 'px';
+
+          document.body.appendChild(menu);
+
+          // Clic sur l'option
+          menu.querySelector('.ai-context-menu-item').addEventListener('click', () => {
+            menu.remove();
+            this.openModal(target);
+          });
+
+          // Fermer si clic ailleurs
+          setTimeout(() => {
+            document.addEventListener('click', () => menu.remove(), { once: true });
+          }, 0);
+        }
+      });
+    },
+
+    // Raccourci clavier Ctrl+Shift+G
+    setupKeyboardShortcut() {
+      document.addEventListener('keydown', (e) => {
+        // Ctrl+Shift+G
+        if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+          e.preventDefault();
+
+          if (lastFocusedField && this.isEditableField(lastFocusedField)) {
+            console.log('AI: Keyboard shortcut triggered');
+            this.openModal(lastFocusedField);
+          } else {
+            this.showNotification('Veuillez d\'abord cliquer dans un champ de texte');
+          }
+        }
+      });
+    },
+
+    // Notification toast
+    showNotification(message) {
+      const toast = document.createElement('div');
+      toast.className = 'ai-toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
   };
 
