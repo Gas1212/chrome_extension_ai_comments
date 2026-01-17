@@ -91,6 +91,8 @@ Réponds uniquement avec le texte de la réponse, sans préfixe ni explication.`
     return await callOpenAI(config.apiKey, prompt);
   } else if (provider === 'anthropic') {
     return await callAnthropic(config.apiKey, prompt);
+  } else if (provider === 'groq') {
+    return await callGroq(config.apiKey, prompt);
   }
 
   throw new Error('Fournisseur AI non supporté');
@@ -213,6 +215,40 @@ async function callAnthropic(apiKey, prompt) {
 
   const data = await response.json();
   return data.content[0].text.trim();
+}
+
+/**
+ * Appeler l'API Groq
+ */
+async function callGroq(apiKey, prompt) {
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 300,
+      temperature: 0.7
+    })
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      throw new Error('Clé API Groq invalide. Vérifiez votre configuration.');
+    } else if (response.status === 429) {
+      throw new Error('Limite de requêtes atteinte. Veuillez réessayer plus tard.');
+    } else if (response.status === 500) {
+      throw new Error('Erreur serveur Groq. Veuillez réessayer plus tard.');
+    }
+    throw new Error(errorData.error?.message || 'Erreur API Groq');
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content.trim();
 }
 
 // Gérer l'installation de l'extension

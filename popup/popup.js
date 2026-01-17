@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // URLs pour obtenir les clés API
   const apiKeyUrls = {
     gemini: 'https://aistudio.google.com/app/apikey',
+    groq: 'https://console.groq.com/keys',
     openai: 'https://platform.openai.com/api-keys',
     anthropic: 'https://console.anthropic.com/settings/keys'
   };
@@ -138,6 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (provider === 'gemini') {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        return response.ok;
+      } else if (provider === 'groq') {
+        const response = await fetch('https://api.groq.com/openai/v1/models', {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`
+          }
+        });
         return response.ok;
       } else if (provider === 'openai') {
         const response = await fetch('https://api.openai.com/v1/models', {
