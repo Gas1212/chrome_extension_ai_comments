@@ -17,7 +17,7 @@
       setInterval(() => this.scanForTextareas(), 2000);
 
       // Ajouter les méthodes universelles
-      this.setupContextMenu();
+      this.setupHoverButton();
       this.setupKeyboardShortcut();
       this.trackFocusedField();
     },
@@ -301,62 +301,70 @@
       );
     },
 
-    // Menu contextuel (clic droit)
-    setupContextMenu() {
-      document.addEventListener('contextmenu', (e) => {
+    // Bouton au survol
+    setupHoverButton() {
+      let hoverButton = null;
+      let hideTimeout = null;
+
+      document.addEventListener('mouseover', (e) => {
         const target = e.target;
         if (this.isEditableField(target)) {
           lastFocusedField = target;
 
-          // Supprimer l'ancien menu s'il existe
-          document.querySelector('.ai-context-menu')?.remove();
+          // Nettoyer timeout précédent
+          if (hideTimeout) {
+            clearTimeout(hideTimeout);
+            hideTimeout = null;
+          }
 
-          // Créer le menu contextuel
-          const menu = document.createElement('div');
-          menu.className = 'ai-context-menu';
-          menu.innerHTML = `
-            <div class="ai-context-menu-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
-              <span>Générer avec AI</span>
-              <span class="ai-shortcut">Ctrl+Shift+G</span>
-            </div>
+          // Supprimer l'ancien bouton s'il existe
+          if (hoverButton) {
+            hoverButton.remove();
+          }
+
+          // Créer le bouton de survol
+          hoverButton = document.createElement('button');
+          hoverButton.className = 'ai-hover-button';
+          hoverButton.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <span>Générer avec AI</span>
           `;
 
-          document.body.appendChild(menu);
+          document.body.appendChild(hoverButton);
 
-          // Positionner intelligemment (éviter de sortir de l'écran)
-          const menuRect = menu.getBoundingClientRect();
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
+          // Positionner au-dessus du champ
+          const fieldRect = target.getBoundingClientRect();
+          hoverButton.style.left = fieldRect.left + 'px';
+          hoverButton.style.top = (fieldRect.top - 50) + 'px';
 
-          let left = e.pageX;
-          let top = e.pageY;
+          // Afficher avec animation
+          setTimeout(() => hoverButton.classList.add('show'), 10);
 
-          // Ajuster si sort à droite
-          if (e.clientX + menuRect.width > viewportWidth) {
-            left = e.pageX - menuRect.width;
-          }
-
-          // Ajuster si sort en bas
-          if (e.clientY + menuRect.height > viewportHeight) {
-            top = e.pageY - menuRect.height;
-          }
-
-          menu.style.left = left + 'px';
-          menu.style.top = top + 'px';
-
-          // Clic sur l'option
-          menu.querySelector('.ai-context-menu-item').addEventListener('click', () => {
-            menu.remove();
+          // Clic sur le bouton
+          hoverButton.addEventListener('click', () => {
+            hoverButton.remove();
+            hoverButton = null;
             this.openModal(target);
           });
+        }
+      });
 
-          // Fermer si clic ailleurs
-          setTimeout(() => {
-            document.addEventListener('click', () => menu.remove(), { once: true });
-          }, 0);
+      // Masquer quand on quitte le champ ou le bouton
+      document.addEventListener('mouseout', (e) => {
+        if (hoverButton && e.target === lastFocusedField) {
+          hideTimeout = setTimeout(() => {
+            if (hoverButton) {
+              hoverButton.classList.remove('show');
+              setTimeout(() => {
+                if (hoverButton) {
+                  hoverButton.remove();
+                  hoverButton = null;
+                }
+              }, 200);
+            }
+          }, 300);
         }
       });
     },

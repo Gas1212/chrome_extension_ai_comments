@@ -1,4 +1,4 @@
-/* Petite icône de génération AI - Positionnée EN DEVANT du champ */
+/* Petite icône de génération AI - Affichée au-dessus du champ */
 .ai-gen-icon {
   position: absolute !important;
   top: -45px !important;
@@ -323,56 +323,45 @@ shreddit-composer .ai-gen-icon {
   }
 }
 
-/* Menu contextuel personnalisé */
-.ai-context-menu {
+/* Menu contextuel personnalisé - Apparaît au survol */
+.ai-hover-button {
   position: absolute;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  padding: 4px;
-  z-index: 1000000;
-  min-width: 220px;
-}
-
-.ai-context-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #1f2937;
-  transition: background 0.2s ease;
-}
-
-.ai-context-menu-item:hover {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-}
-
-.ai-context-menu-item svg {
-  flex-shrink: 0;
-  stroke-width: 2.5;
-}
-
-.ai-context-menu-item span:first-of-type {
-  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  z-index: 1000000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
 }
 
-.ai-shortcut {
-  font-size: 11px;
-  opacity: 0.7;
-  padding: 2px 6px;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 4px;
-  font-family: monospace;
+.ai-hover-button.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
-.ai-context-menu-item:hover .ai-shortcut {
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 0.9;
+.ai-hover-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+}
+
+.ai-hover-button svg {
+  width: 16px;
+  height: 16px;
+  stroke: white;
+  stroke-width: 2.5;
+  fill: none;
 }
 
 /* Notification toast */
