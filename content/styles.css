@@ -1,8 +1,8 @@
 /* Petite icône de génération AI - Circulaire et visible */
 .ai-gen-icon {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   width: 36px;
   height: 36px;
   padding: 0;
@@ -19,6 +19,12 @@
   z-index: 10000;
   opacity: 1;
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* Position spéciale pour shreddit-composer de Reddit */
+shreddit-composer .ai-gen-icon {
+  top: 50px;
+  right: 12px;
 }
 
 @keyframes pulse {

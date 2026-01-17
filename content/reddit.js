@@ -28,6 +28,7 @@
     scanForTextareas() {
       // Sélecteurs pour les champs de commentaire Reddit
       const selectors = [
+        'shreddit-composer [contenteditable="true"]', // Nouveau Reddit
         'textarea',
         'div[contenteditable="true"]',
         '.public-DraftEditor-content',
@@ -36,7 +37,10 @@
 
       selectors.forEach(selector => {
         document.querySelectorAll(selector).forEach(el => {
-          this.addIconToField(el);
+          // Ignorer les champs dans notre modal
+          if (!el.closest('.ai-modal')) {
+            this.addIconToField(el);
+          }
         });
       });
     },
@@ -44,7 +48,6 @@
     // Ajouter l'icône au champ
     addIconToField(field) {
       if (field.dataset.aiIconAdded) return;
-      if (field.closest('.ai-modal')) return; // Ignorer dans la modal
 
       field.dataset.aiIconAdded = 'true';
 
@@ -59,11 +62,20 @@
         </svg>
       `;
 
-      // Trouver le bon parent pour positionner l'icône
-      const parent = field.parentElement;
-      if (parent && !parent.querySelector('.ai-gen-icon')) {
-        parent.style.position = 'relative';
-        parent.appendChild(icon);
+      // Trouver le meilleur parent pour l'icône
+      // Pour shreddit-composer, utiliser le composer lui-même
+      let container = field.closest('shreddit-composer');
+      if (!container) {
+        container = field.parentElement;
+      }
+
+      if (container && !container.querySelector('.ai-gen-icon')) {
+        // S'assurer que le conteneur a position relative
+        const computedStyle = window.getComputedStyle(container);
+        if (computedStyle.position === 'static') {
+          container.style.position = 'relative';
+        }
+        container.appendChild(icon);
       }
 
       // Click handler
