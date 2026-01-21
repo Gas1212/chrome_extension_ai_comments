@@ -10,91 +10,85 @@
   const QuoraAI = {
     init() {
       console.log('Quora AI Commentaire initialized');
-      this.observeDOM();
-      this.scanForTextareas();
-
-      // Méthodes universelles
-      this.setupHoverButton();
+      this.setupHoverIcon();
       this.setupKeyboardShortcut();
       this.trackFocusedField();
     },
 
-    // Observer les changements du DOM
-    observeDOM() {
-      const observer = new MutationObserver(() => {
-        this.scanForTextareas();
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-    },
-
-    // Scanner pour trouver les zones de texte
-    scanForTextareas() {
-      const selectors = [
-        'textarea',
-        'div[contenteditable="true"]',
-        '[role="textbox"]'
-      ];
-
-      selectors.forEach(selector => {
-        document.querySelectorAll(selector).forEach(el => {
-          this.addIconToField(el);
-        });
-      });
-    },
-
-    // Ajouter l'icône au champ
-    addIconToField(field) {
-      if (field.dataset.aiIconAdded) return;
-      if (field.closest('.ai-modal')) return;
-
-      field.dataset.aiIconAdded = 'true';
-
-      const icon = document.createElement('button');
-      icon.className = 'ai-gen-icon';
-      icon.type = 'button';
-      icon.title = 'Générer avec AI';
-      icon.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-      `;
-
-      const parent = field.parentElement;
-      if (parent && !parent.querySelector('.ai-gen-icon')) {
-        parent.style.position = 'relative';
-        parent.appendChild(icon);
-      }
-
-      icon.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.openModal(field);
-      });
-    },
-
-    // Obtenir le contexte
+    // Obtenir le contexte lié au champ de commentaire
     getContext(field) {
-      // Question de la page
-      const question = document.querySelector('.q-text.qu-display--block, .puppeteer_test_question_title, h1');
       let context = '';
+      let questionText = null;
+      let contentText = null;
 
-      if (question) {
-        context = 'Question: ' + question.textContent.trim().substring(0, 300);
+      // Remonter dans le DOM pour trouver le bloc post/answer parent
+      let container = field.parentElement;
+      for (let i = 0; i < 30 && container; i++) {
+        // 1. Chercher la question (pour les réponses)
+        if (!questionText) {
+          const questionEl = container.querySelector('.puppeteer_test_question_title span');
+          if (questionEl) {
+            questionText = questionEl.textContent.trim();
+            console.log('AI: Found question:', questionText.substring(0, 50));
+          }
+        }
+
+        // 2. Chercher le contenu (réponse ou post)
+        if (!contentText) {
+          // D'abord essayer le contenu de réponse
+          let contentEl = container.querySelector('.puppeteer_test_answer_content .q-text span, .spacing_log_answer_content .q-text span');
+
+          // Sinon essayer le contenu de post (qu-truncateLines)
+          if (!contentEl) {
+            contentEl = container.querySelector('.qu-truncateLines--3 > span, .qu-truncateLines--5 > span');
+          }
+
+          // Sinon chercher tout span avec du texte significatif dans q-box qu-cursor--pointer
+          if (!contentEl) {
+            const postBox = container.querySelector('.qu-cursor--pointer.b1waa02m .q-text');
+            if (postBox) {
+              contentEl = postBox.querySelector('span');
+            }
+          }
+
+          if (contentEl) {
+            // Vérifier que ce n'est pas le champ de saisie
+            if (!contentEl.contains(field) && !contentEl.closest('[contenteditable="true"]')) {
+              const text = contentEl.textContent.trim();
+              if (text.length > 20) {
+                contentText = text;
+                console.log('AI: Found content:', contentText.substring(0, 50));
+              }
+            }
+          }
+        }
+
+        // Si on a trouvé le contenu (et la question si c'est une réponse), on arrête
+        if (contentText && (questionText || i > 15)) break;
+
+        container = container.parentElement;
       }
 
-      // Réponse proche
-      const answer = field.closest('.Answer, [data-post-type="answer"]');
-      if (answer) {
-        const answerText = answer.querySelector('.q-text, .Answer__content');
-        if (answerText) {
-          context += '\n\nRéponse: ' + answerText.textContent.trim().substring(0, 400);
+      // Fallback: chercher la question sur toute la page
+      if (!questionText) {
+        const pageQuestion = document.querySelector('.puppeteer_test_question_title span');
+        if (pageQuestion) {
+          questionText = pageQuestion.textContent.trim();
+          console.log('AI: Using page question fallback:', questionText.substring(0, 50));
         }
       }
 
+      // Construire le contexte
+      if (questionText) {
+        context = 'Question: ' + questionText.substring(0, 300);
+      }
+
+      if (contentText) {
+        const label = questionText ? 'Réponse' : 'Publication';
+        context += (context ? '\n\n' : '') + label + ': ' + contentText.substring(0, 500);
+      }
+
+      console.log('AI: Final context:', context || '(empty)');
       return context;
     },
 
@@ -267,73 +261,98 @@
         element.tagName === 'INPUT' ||
         element.isContentEditable ||
         element.getAttribute('contenteditable') === 'true' ||
-        element.getAttribute('role') === 'textbox'
+        element.getAttribute('role') === 'textbox' ||
+        element.getAttribute('data-kind') === 'doc'
       );
     },
 
-    setupHoverButton() {
-      let hoverButton = null;
-      let hideTimeout = null;
+    setupHoverIcon() {
+      let hoverIcon = null;
+      let currentField = null;
 
+      const showIcon = (field) => {
+        if (currentField === field && hoverIcon) return;
+
+        // Supprimer l'ancien icône
+        if (hoverIcon) {
+          hoverIcon.remove();
+          hoverIcon = null;
+        }
+
+        currentField = field;
+        lastFocusedField = field;
+
+        // Créer l'icône
+        hoverIcon = document.createElement('button');
+        hoverIcon.className = 'ai-hover-icon';
+        hoverIcon.type = 'button';
+        hoverIcon.title = 'Générer avec AI (Ctrl+Shift+G)';
+        hoverIcon.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        `;
+
+        document.body.appendChild(hoverIcon);
+
+        // Positionner dans le coin supérieur droit du champ
+        const updatePosition = () => {
+          const rect = field.getBoundingClientRect();
+          hoverIcon.style.left = (rect.right - 36 + window.scrollX) + 'px';
+          hoverIcon.style.top = (rect.top + 6 + window.scrollY) + 'px';
+        };
+
+        updatePosition();
+
+        // Afficher avec animation
+        requestAnimationFrame(() => hoverIcon.classList.add('show'));
+
+        // Clic sur l'icône
+        hoverIcon.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.openModal(field);
+        });
+
+        // Garder l'icône visible quand on la survole
+        hoverIcon.addEventListener('mouseenter', () => {
+          hoverIcon.dataset.hovered = 'true';
+        });
+
+        hoverIcon.addEventListener('mouseleave', () => {
+          hoverIcon.dataset.hovered = 'false';
+        });
+      };
+
+      const hideIcon = () => {
+        if (hoverIcon && hoverIcon.dataset.hovered !== 'true') {
+          hoverIcon.classList.remove('show');
+          setTimeout(() => {
+            if (hoverIcon && hoverIcon.dataset.hovered !== 'true') {
+              hoverIcon.remove();
+              hoverIcon = null;
+              currentField = null;
+            }
+          }, 200);
+        }
+      };
+
+      // Événements de survol
       document.addEventListener('mouseover', (e) => {
-        const target = e.target;
-        if (this.isEditableField(target)) {
-          lastFocusedField = target;
-
-          // Nettoyer timeout précédent
-          if (hideTimeout) {
-            clearTimeout(hideTimeout);
-            hideTimeout = null;
-          }
-
-          // Supprimer l'ancien bouton s'il existe
-          if (hoverButton) {
-            hoverButton.remove();
-          }
-
-          // Créer le bouton de survol
-          hoverButton = document.createElement('button');
-          hoverButton.className = 'ai-hover-button';
-          hoverButton.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            <span>Générer avec AI</span>
-          `;
-
-          document.body.appendChild(hoverButton);
-
-          // Positionner au-dessus du champ
-          const fieldRect = target.getBoundingClientRect();
-          hoverButton.style.left = fieldRect.left + 'px';
-          hoverButton.style.top = (fieldRect.top - 50) + 'px';
-
-          // Afficher avec animation
-          setTimeout(() => hoverButton.classList.add('show'), 10);
-
-          // Clic sur le bouton
-          hoverButton.addEventListener('click', () => {
-            hoverButton.remove();
-            hoverButton = null;
-            this.openModal(target);
-          });
+        const field = e.target.closest('[contenteditable="true"], textarea, [role="textbox"], input[type="text"]');
+        if (field && this.isEditableField(field)) {
+          showIcon(field);
         }
       });
 
-      // Masquer quand on quitte le champ ou le bouton
       document.addEventListener('mouseout', (e) => {
-        if (hoverButton && e.target === lastFocusedField) {
-          hideTimeout = setTimeout(() => {
-            if (hoverButton) {
-              hoverButton.classList.remove('show');
-              setTimeout(() => {
-                if (hoverButton) {
-                  hoverButton.remove();
-                  hoverButton = null;
-                }
-              }, 200);
+        const field = e.target.closest('[contenteditable="true"], textarea, [role="textbox"], input[type="text"]');
+        if (field && currentField === field) {
+          setTimeout(() => {
+            if (hoverIcon && hoverIcon.dataset.hovered !== 'true') {
+              hideIcon();
             }
-          }, 300);
+          }, 100);
         }
       });
     },
