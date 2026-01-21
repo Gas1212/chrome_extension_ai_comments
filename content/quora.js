@@ -84,7 +84,7 @@
       }
 
       if (contentText) {
-        const label = questionText ? 'Réponse' : 'Publication';
+        const label = questionText ? 'Answer' : 'Post';
         context += (context ? '\n\n' : '') + label + ': ' + contentText.substring(0, 500);
       }
 
@@ -102,34 +102,34 @@
       overlay.innerHTML = `
         <div class="ai-modal">
           <div class="ai-modal-header">
-            <h2 class="ai-modal-title">Générer une réponse</h2>
+            <h2 class="ai-modal-title">Generate Response</h2>
             <button class="ai-modal-close">&times;</button>
           </div>
 
           <div class="ai-tone-selector">
-            <label class="ai-tone-label">Ton :</label>
+            <label class="ai-tone-label">Tone:</label>
             <div class="ai-tone-options">
-              <button class="ai-tone-option selected" data-tone="friendly">Amical</button>
+              <button class="ai-tone-option selected" data-tone="friendly">Friendly</button>
               <button class="ai-tone-option" data-tone="professional">Pro</button>
-              <button class="ai-tone-option" data-tone="humorous">Humour</button>
+              <button class="ai-tone-option" data-tone="humorous">Humor</button>
               <button class="ai-tone-option" data-tone="informative">Info</button>
             </div>
           </div>
 
           <div class="ai-context-section">
-            <label class="ai-context-label">Contexte :</label>
+            <label class="ai-context-label">Context:</label>
             <textarea class="ai-context-text">${context}</textarea>
           </div>
 
           <div class="ai-response-section">
-            <label class="ai-response-label">Réponse :</label>
-            <textarea class="ai-response-text" placeholder="Cliquez sur Générer..."></textarea>
+            <label class="ai-response-label">Response:</label>
+            <textarea class="ai-response-text" placeholder="Click Generate..."></textarea>
           </div>
 
           <div class="ai-modal-actions">
-            <button class="ai-btn ai-btn-secondary" id="ai-generate">Générer</button>
-            <button class="ai-btn ai-btn-secondary" id="ai-copy" disabled>Copier</button>
-            <button class="ai-btn ai-btn-primary" id="ai-insert" disabled>Insérer</button>
+            <button class="ai-btn ai-btn-secondary" id="ai-generate">Generate</button>
+            <button class="ai-btn ai-btn-secondary" id="ai-copy" disabled>Copy</button>
+            <button class="ai-btn ai-btn-primary" id="ai-insert" disabled>Insert</button>
           </div>
         </div>
       `;
@@ -159,11 +159,11 @@
         const ctx = contextTextarea.value.trim();
 
         if (!ctx) {
-          responseTextarea.value = 'Entrez un contexte.';
+          responseTextarea.value = 'Enter context.';
           return;
         }
 
-        responseTextarea.value = 'Génération...';
+        responseTextarea.value = 'Generating...';
         generateBtn.disabled = true;
 
         try {
@@ -172,7 +172,7 @@
           insertBtn.disabled = false;
           copyBtn.disabled = false;
         } catch (err) {
-          responseTextarea.value = 'Erreur: ' + err.message;
+          responseTextarea.value = 'Error: ' + err.message;
         }
         generateBtn.disabled = false;
       };
@@ -180,11 +180,11 @@
       // Copier
       copyBtn.onclick = async () => {
         const text = responseTextarea.value;
-        if (text && !text.startsWith('Erreur') && !text.startsWith('Génération')) {
+        if (text && !text.startsWith('Error') && !text.startsWith('Generating')) {
           try {
             await navigator.clipboard.writeText(text);
             const originalText = copyBtn.textContent;
-            copyBtn.textContent = '✓ Copié!';
+            copyBtn.textContent = '✓ Copied!';
             copyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
 
             setTimeout(() => {
@@ -192,14 +192,14 @@
               copyBtn.style.background = '';
             }, 2000);
           } catch (err) {
-            this.showNotification('Erreur lors de la copie');
+            this.showNotification('Copy failed');
           }
         }
       };
 
       insertBtn.onclick = () => {
         const text = responseTextarea.value;
-        if (text && !text.startsWith('Erreur') && !text.startsWith('Génération')) {
+        if (text && !text.startsWith('Error') && !text.startsWith('Generating')) {
           if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
             field.value = text;
           } else if (field.isContentEditable || field.getAttribute('contenteditable') === 'true') {
@@ -230,15 +230,15 @@
             tone
           }, (res) => {
             if (chrome.runtime.lastError) {
-              reject(new Error('Rafraîchissez la page (F5)'));
+              reject(new Error('Please refresh the page (F5)'));
             } else if (!res || res.error) {
-              reject(new Error(res?.error || 'Erreur'));
+              reject(new Error(res?.error || 'Error'));
             } else {
               resolve(res.text);
             }
           });
         } catch {
-          reject(new Error('Rafraîchissez la page (F5)'));
+          reject(new Error('Please refresh the page (F5)'));
         }
       });
     },
@@ -286,7 +286,7 @@
         hoverIcon = document.createElement('button');
         hoverIcon.className = 'ai-hover-icon';
         hoverIcon.type = 'button';
-        hoverIcon.title = 'Générer avec AI (Ctrl+Shift+G)';
+        hoverIcon.title = 'Generate with AI (Ctrl+Shift+G)';
         hoverIcon.innerHTML = `
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
@@ -365,7 +365,7 @@
             console.log('AI: Keyboard shortcut triggered');
             this.openModal(lastFocusedField);
           } else {
-            this.showNotification('Veuillez d\'abord cliquer dans un champ de texte');
+            this.showNotification('Please click on a text field first');
           }
         }
       });

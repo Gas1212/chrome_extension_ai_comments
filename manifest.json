@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Commentaire AI",
+  "name": "AI Comment Generator",
   "version": "1.0.0",
-  "description": "Extension pour générer des réponses intelligentes aux commentaires sur Quora",
+  "description": "Generate smart, contextual responses for Quora comments with AI",
   "permissions": [
     "activeTab",
     "storage"

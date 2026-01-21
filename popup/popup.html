@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Commentaire AI</title>
+  <title>AI Comment Generator</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -13,36 +13,36 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
           <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
         </svg>
-        <h1>Commentaire AI</h1>
+        <h1>AI Comment Generator</h1>
       </div>
-      <p class="subtitle">Générez des réponses intelligentes</p>
+      <p class="subtitle">Generate smart responses</p>
     </header>
 
     <main class="popup-main">
       <!-- Status -->
       <div class="status-card" id="statusCard">
         <div class="status-indicator" id="statusIndicator"></div>
-        <span class="status-text" id="statusText">Non configuré</span>
+        <span class="status-text" id="statusText">Not configured</span>
       </div>
 
       <!-- Configuration API -->
       <section class="config-section">
-        <h2>Configuration API</h2>
+        <h2>API Configuration</h2>
 
         <div class="form-group">
-          <label for="apiProvider">Fournisseur AI</label>
+          <label for="apiProvider">AI Provider</label>
           <select id="apiProvider">
-            <option value="gemini">Google Gemini (Recommandé)</option>
-            <option value="groq">Groq (Llama 3.3 - Rapide)</option>
+            <option value="gemini">Google Gemini (Recommended)</option>
+            <option value="groq">Groq (Llama 3.3 - Fast)</option>
             <option value="openai">OpenAI (GPT-3.5)</option>
             <option value="anthropic">Anthropic (Claude)</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="apiKey">Clé API</label>
+          <label for="apiKey">API Key</label>
           <div class="input-with-toggle">
-            <input type="password" id="apiKey" placeholder="Entrez votre clé API...">
+            <input type="password" id="apiKey" placeholder="Enter your API key...">
             <button type="button" class="toggle-visibility" id="toggleVisibility">
               <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -51,54 +51,49 @@
             </button>
           </div>
           <small class="help-text">
-            <a href="#" id="getApiKeyLink" target="_blank">Obtenir une clé API</a>
+            <a href="#" id="getApiKeyLink" target="_blank">Get an API key</a>
           </small>
         </div>
 
         <button class="btn btn-primary" id="saveConfig">
-          Sauvegarder
+          Save
         </button>
       </section>
 
-      <!-- Paramètres -->
+      <!-- Settings -->
       <section class="settings-section">
-        <h2>Paramètres</h2>
+        <h2>Settings</h2>
 
         <div class="form-group">
-          <label for="defaultTone">Ton par défaut</label>
+          <label for="defaultTone">Default Tone</label>
           <select id="defaultTone">
-            <option value="friendly">Amical</option>
-            <option value="professional">Professionnel</option>
-            <option value="humorous">Humoristique</option>
-            <option value="informative">Informatif</option>
-            <option value="supportive">Encourageant</option>
+            <option value="friendly">Friendly</option>
+            <option value="professional">Professional</option>
+            <option value="humorous">Humorous</option>
+            <option value="informative">Informative</option>
+            <option value="supportive">Supportive</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="language">Langue des réponses</label>
+          <label for="language">Response Language</label>
           <select id="language">
-            <option value="fr">Français</option>
             <option value="en">English</option>
+            <option value="fr">Français</option>
             <option value="es">Español</option>
             <option value="de">Deutsch</option>
           </select>
         </div>
       </section>
 
-      <!-- Sites supportés -->
+      <!-- Supported sites -->
       <section class="sites-section">
-        <h2>Sites supportés</h2>
+        <h2>Supported Sites</h2>
         <div class="sites-list">
-          <div class="site-item">
-            <span class="site-icon">🔴</span>
-            <span class="site-name">Reddit</span>
-            <span class="site-status active">Actif</span>
-          </div>
           <div class="site-item">
             <span class="site-icon">🟠</span>
             <span class="site-name">Quora</span>
-            <span class="site-status active">Actif</span>
+            <span class="site-status active">Active</span>
           </div>
         </div>
       </section>
