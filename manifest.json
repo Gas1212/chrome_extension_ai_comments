@@ -1,10 +1,9 @@
 {
   "manifest_version": 3,
   "name": "AI Comment Generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate smart, contextual responses for Quora comments with AI",
   "permissions": [
-    "activeTab",
     "storage"
   ],
   "host_permissions": [
