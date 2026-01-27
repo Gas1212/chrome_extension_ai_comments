@@ -21,7 +21,7 @@ async function handleGenerateResponse(context, tone) {
   const config = await chrome.storage.sync.get(['apiKey', 'apiProvider', 'language']);
 
   if (!config.apiKey) {
-    throw new Error('Clé API non configurée. Cliquez sur l\'icône de l\'extension pour configurer.');
+    throw new Error('API key not configured. Click the extension icon to set up your API key.');
   }
 
   const provider = config.apiProvider || 'openai';
@@ -95,7 +95,7 @@ Réponds uniquement avec le texte de la réponse, sans préfixe ni explication.`
     return await callGroq(config.apiKey, prompt);
   }
 
-  throw new Error('Fournisseur AI non supporté');
+  throw new Error('Unsupported AI provider');
 }
 
 /**
@@ -125,25 +125,25 @@ async function callGemini(apiKey, prompt) {
     console.error('Gemini API Error:', response.status, errorMsg);
 
     if (response.status === 400 && errorMsg.includes('API_KEY')) {
-      throw new Error('Clé API invalide. Vérifiez sur aistudio.google.com');
+      throw new Error('Invalid API key. Check your key at aistudio.google.com');
     } else if (response.status === 403) {
-      throw new Error('API non autorisée. Activez l\'API sur aistudio.google.com');
+      throw new Error('API not authorized. Enable the API at aistudio.google.com');
     } else if (response.status === 429) {
-      throw new Error('Limite atteinte. Attendez 1 minute.');
+      throw new Error('Rate limit reached. Wait 1 minute and try again.');
     } else if (response.status === 404) {
-      throw new Error('Modèle non disponible.');
+      throw new Error('Model not available.');
     }
-    throw new Error(errorMsg || `Erreur Gemini (${response.status})`);
+    throw new Error(errorMsg || `Gemini error (${response.status})`);
   }
 
   const data = await response.json();
 
   if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-    console.error('Réponse inattendue:', data);
+    console.error('Unexpected response:', data);
     if (data.promptFeedback?.blockReason) {
-      throw new Error('Contenu bloqué par le filtre de sécurité.');
+      throw new Error('Content blocked by safety filter.');
     }
-    throw new Error('Réponse vide. Réessayez.');
+    throw new Error('Empty response. Please try again.');
   }
 
   return data.candidates[0].content.parts[0].text.trim();
@@ -170,13 +170,13 @@ async function callOpenAI(apiKey, prompt) {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     if (response.status === 401) {
-      throw new Error('Clé API invalide. Veuillez vérifier votre configuration.');
+      throw new Error('Invalid API key. Please check your configuration.');
     } else if (response.status === 429) {
-      throw new Error('Limite de requêtes atteinte. Veuillez réessayer plus tard.');
+      throw new Error('Rate limit reached. Please try again later.');
     } else if (response.status === 500) {
-      throw new Error('Erreur serveur OpenAI. Veuillez réessayer plus tard.');
+      throw new Error('OpenAI server error. Please try again later.');
     }
-    throw new Error(errorData.error?.message || 'Erreur API OpenAI');
+    throw new Error(errorData.error?.message || 'OpenAI API error');
   }
 
   const data = await response.json();
@@ -204,13 +204,13 @@ async function callAnthropic(apiKey, prompt) {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     if (response.status === 401) {
-      throw new Error('Clé API invalide. Veuillez vérifier votre configuration.');
+      throw new Error('Invalid API key. Please check your configuration.');
     } else if (response.status === 429) {
-      throw new Error('Limite de requêtes atteinte. Veuillez réessayer plus tard.');
+      throw new Error('Rate limit reached. Please try again later.');
     } else if (response.status === 500) {
-      throw new Error('Erreur serveur Anthropic. Veuillez réessayer plus tard.');
+      throw new Error('Anthropic server error. Please try again later.');
     }
-    throw new Error(errorData.error?.message || 'Erreur API Anthropic');
+    throw new Error(errorData.error?.message || 'Anthropic API error');
   }
 
   const data = await response.json();
@@ -238,13 +238,13 @@ async function callGroq(apiKey, prompt) {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     if (response.status === 401) {
-      throw new Error('Clé API Groq invalide. Vérifiez votre configuration.');
+      throw new Error('Invalid Groq API key. Check your configuration.');
     } else if (response.status === 429) {
-      throw new Error('Limite de requêtes atteinte. Veuillez réessayer plus tard.');
+      throw new Error('Rate limit reached. Please try again later.');
     } else if (response.status === 500) {
-      throw new Error('Erreur serveur Groq. Veuillez réessayer plus tard.');
+      throw new Error('Groq server error. Please try again later.');
     }
-    throw new Error(errorData.error?.message || 'Erreur API Groq');
+    throw new Error(errorData.error?.message || 'Groq API error');
   }
 
   const data = await response.json();
@@ -256,10 +256,10 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     console.log('Commentaire AI installed successfully!');
 
-    // Définir les paramètres par défaut
+    // Set default settings
     chrome.storage.sync.set({
       defaultTone: 'friendly',
-      language: 'fr'
+      language: 'en'
     });
   } else if (details.reason === 'update') {
     console.log('Commentaire AI updated to version', chrome.runtime.getManifest().version);

@@ -86,13 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiProvider = apiProviderSelect.value;
 
     if (!apiKey) {
-      showToast('Veuillez entrer une clé API', 'error');
+      showToast('Please enter an API key', 'error');
       return;
     }
 
     try {
-      // Valider la clé API
-      saveConfigBtn.textContent = 'Vérification...';
+      // Validate API key
+      saveConfigBtn.textContent = 'Verifying...';
       saveConfigBtn.disabled = true;
 
       const isValid = await validateApiKey(apiKey, apiProvider);
@@ -104,16 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         updateStatus(true);
-        showToast('Configuration sauvegardée !', 'success');
+        showToast('Configuration saved!', 'success');
       } else {
-        showToast('Clé API invalide', 'error');
+        showToast('Invalid API key', 'error');
         updateStatus(false);
       }
     } catch (error) {
-      showToast('Erreur de connexion', 'error');
+      showToast('Connection error', 'error');
       console.error('Error saving config:', error);
     } finally {
-      saveConfigBtn.textContent = 'Sauvegarder';
+      saveConfigBtn.textContent = 'Save';
       saveConfigBtn.disabled = false;
     }
   }
@@ -191,10 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateStatus(isConfigured) {
     if (isConfigured) {
       statusIndicator.classList.add('active');
-      statusText.textContent = 'Prêt à utiliser';
+      statusText.textContent = 'Ready to use';
     } else {
       statusIndicator.classList.remove('active');
-      statusText.textContent = 'Non configuré';
+      statusText.textContent = 'Not configured';
     }
   }
 

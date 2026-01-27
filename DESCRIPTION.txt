@@ -1,0 +1,65 @@
+AI Comment Generator - Chrome Web Store Description
+
+=== SHORT DESCRIPTION (132 chars max) ===
+Generate smart, contextual responses for Quora comments with AI. Supports Gemini, Groq, OpenAI, and Anthropic.
+
+=== DETAILED DESCRIPTION ===
+
+Generate intelligent, context-aware responses for Quora comments with AI assistance. Simply hover over any comment field to see the AI icon, and let the extension help you craft thoughtful replies.
+
+🚀 FEATURES
+• Hover-based AI icon on comment fields
+• Automatic context detection (questions and answers)
+• Multiple AI providers: Google Gemini, Groq, OpenAI, Anthropic
+• Customizable tone: Friendly, Professional, Humorous, Informative
+• Multi-language support: English, French, Spanish, German
+• Keyboard shortcut: Ctrl+Shift+G
+
+⚙️ SETUP INSTRUCTIONS (REQUIRED)
+1. Install the extension
+2. Click the extension icon in your browser toolbar
+3. Choose your preferred AI provider
+4. Get a FREE API key:
+   • Gemini: https://aistudio.google.com/app/apikey (Recommended - Free tier available)
+   • Groq: https://console.groq.com/keys (Free tier available)
+   • OpenAI: https://platform.openai.com/api-keys (Paid)
+   • Anthropic: https://console.anthropic.com/settings/keys (Paid)
+5. Paste your API key and click Save
+6. You're ready to go!
+
+💡 HOW TO USE
+1. Visit Quora.com
+2. Hover over any comment input field
+3. Click the AI icon that appears
+4. Review the auto-detected context
+5. Select your preferred tone
+6. Click Generate
+7. Insert or copy the generated response
+
+🔒 PRIVACY & SECURITY
+• All API keys are stored locally on your device
+• No data is collected or transmitted to our servers
+• Requests go directly from your browser to your chosen AI provider
+• Open source code available on GitHub
+
+⚠️ IMPORTANT NOTES
+• An API key is REQUIRED for the extension to work
+• Most AI providers offer free tiers with generous limits
+• Google Gemini is recommended for best free tier experience
+• The extension only works on Quora.com
+
+📝 SUPPORT
+For issues or questions, visit our GitHub repository.
+
+---
+
+=== SINGLE PURPOSE DESCRIPTION (for Privacy form) ===
+Generate AI-powered comment responses for Quora. The extension detects comment input fields on Quora pages and allows users to generate contextual responses using AI (via external API providers like Google Gemini, Groq, OpenAI, or Anthropic) based on the question or post content.
+
+=== PERMISSION JUSTIFICATIONS ===
+
+storage:
+The storage permission is used to save user preferences locally, including: the selected AI provider (Gemini, Groq, OpenAI, or Anthropic), the user's API key for their chosen provider, the default response tone setting, and the preferred language for generated responses.
+
+Host permissions (quora.com):
+Host permissions for quora.com are required because the extension's sole purpose is to function on Quora pages. The content script needs to: detect comment input fields, read surrounding context (questions and answers) to provide relevant AI-generated responses, and insert generated text into comment fields.
